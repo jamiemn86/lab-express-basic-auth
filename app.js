@@ -7,6 +7,7 @@ const serveFavicon = require('serve-favicon');
 
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth.routes');
+const userDeserializerMiddleware = require('./middleware/user-deserializer');
 
 const app = express();
 require('./routes/session.config')(app);
@@ -14,12 +15,6 @@ require('./routes/session.config')(app);
 // Setup view engine
 app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-app.use(express.static(join(__dirname, 'public')));
-app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
-
-app.use(logger('dev'));
-app.use(express.urlencoded({ extended: false }));
 app.use(
   sassMiddleware({
     src: join(__dirname, 'public'),
@@ -30,6 +25,13 @@ app.use(
     sourceMap: true
   })
 );
+app.use(express.static(join(__dirname, 'public')));
+app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
+
+app.use(logger('dev'));
+app.use(express.urlencoded({ extended: false }));
+
+app.use(userDeserializerMiddleware);
 
 app.use('/', indexRouter);
 app.use('/', authRouter);

@@ -3,6 +3,7 @@ const router = new Router();
 const bcryptjs = require('bcryptjs');
 const saltRounds = 10;
 const User = require('../models/user');
+const routeGuardMiddleware = require('../middleware/route-guard.js');
 
 // GET route ==> to display the signup form to users
 router.get('/signup', (req, res) => res.render('auth/signup'));
@@ -99,6 +100,10 @@ router.post('/login', (req, res, next) => {
       }
     })
     .catch((error) => next(error));
+});
+
+router.get('/private', routeGuardMiddleware, (req, res, next) => {
+  res.render('private');
 });
 
 module.exports = router;
