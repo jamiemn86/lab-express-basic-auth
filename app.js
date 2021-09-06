@@ -9,6 +9,7 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth.routes');
 
 const app = express();
+require('./routes/session.config')(app);
 
 // Setup view engine
 app.set('views', join(__dirname, 'views'));

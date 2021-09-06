@@ -1,7 +1,7 @@
 <p>User profile page</p>
 
-{{#if user}}
-  <h2>Welcome, {{userFromDB.username}}!</h2>
+{{#if userInSession}}
+  <h2>Welcome, {{userInSession.username}}!</h2>
   <p>This is your profile page my friend!</p>
 {{else}}
   <p>Still no logged in user, sorry!</p>

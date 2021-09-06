@@ -31,6 +31,7 @@ router.get('/signup', (req, res) => res.render('auth/signup'));
 
 // ### Sign-up POST route ###
 router.post('/signup', (req, res, next) => {
+  console.log('SESSION =====> ', req.session);
   console.log('The form data: ', req.body);
   const { username, password } = req.body;
   let user;
@@ -51,6 +52,7 @@ router.post('/signup', (req, res, next) => {
     })
     .then((entry) => {
       console.log('New user created', entry);
+      req.session.currentUser = entry;
       res.redirect('/userprofile');
     })
     .catch((error) => {
@@ -59,7 +61,12 @@ router.post('/signup', (req, res, next) => {
 });
 
 // GET route for user profile page
-router.get('/userprofile', (req, res) => res.render('users/userprofile'));
+// router.get('/userprofile', (req, res) =>
+//   res.render('users/userprofile', { userInSession: req.session.currentUser })
+// );
+router.get('/userprofile', (req, res) => {
+  res.render('users/userprofile', { userInSession: req.session.currentUser });
+});
 
 // GET route ==> to display the login form to users
 router.get('/login', (req, res) => res.render('auth/login'));
@@ -80,11 +87,13 @@ router.post('/login', (req, res, next) => {
     .then((user) => {
       if (!user) {
         res.render('auth/login', {
-          errorMessage: 'Username is not registered. Try with other email.'
+          errorMessage: 'Username is not registered. Try with other username.'
         });
         return;
       } else if (bcryptjs.compareSync(password, user.passwordHash)) {
-        res.render('users/userprofile', { user });
+        req.session.currentUser = user;
+        console.log(req.session.currentUser);
+        res.redirect('/userprofile');
       } else {
         res.render('auth/login', { errorMessage: 'Incorrect password.' });
       }
